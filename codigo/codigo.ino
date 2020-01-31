@@ -103,22 +103,25 @@ void setup() {
 
   //inicializa a serial
   Serial.begin(9600);
+  
+  //chama a função
   print_tela();
 
 }
 
+//função que imprime os desenhos na tela
 
 void print_tela(){
 
-    //dino
+    //desenha dino
     lcd.setCursor(0,1);
     lcd.write(byte(dino));
     
-    //cactus
+    //desenha cactus
     lcd.setCursor(pos_cactus, 1);
     lcd.write(byte(cactus));
 
-    //pite  
+    //desenha pite  
     lcd.setCursor(pos_pite, 0);
     lcd.write(byte(pit));
   
@@ -129,53 +132,53 @@ void loop() {
 
   tempo = millis(); //tempo atual de execução
   
-  if((tempo-t_a_dino)>=tempo_dino){    
+  if((tempo-t_a_dino)>=tempo_dino){ //se o (tempo atual - o tempo anterior do dino) for maior ou igual ao tempo estipulado de repetição do dino
+    t_a_dino = tempo; // o tempo anterior é atualizado
 
-    t_a_dino = tempo;
-
-    if(dino > 2 ){    //reseta a imagem do dino
+    if(dino > 2){    //reseta a imagem do dino
       dino = 0;
     }else{
       dino++;       //modifica a imagem do dino
     }
-    lcd.clear();
-    print_tela();
+    
+    lcd.clear(); //limpa tela
+    print_tela(); //chama a função de imprimir desenhos
+    
+  }
 
-    }
 
-
-  if(tempo-t_a_cenario>tempo_cenario){
+  if((tempo-t_a_cenario)>tempo_cenario){ //se o (tempo atual - o tempo anterior do cenário) for maior ou igual ao tempo estipulado de repetição do cenário
     
     if(pos_cactus<1){ //reseta a posição do cactus
-      pos_cactus = 16;
+      pos_cactus = 16; //colocamos 16 porque em seguida decretaremos a posição (se colocássemos 15 ele nunca chegaria no 15
     }
   
     if(pos_pite<1){  //reseta a posição do pite
-      pos_pite = 16;
+      pos_pite = 16; //colocamos 16 porque em seguida decretaremos a posição (se colocássemos 15 ele nunca chegaria no 15
     }
   
-    if(pit == 6)     //reseta a imagem do pite
+    if(pit == 6){     //reseta a imagem do pite
       pit = 4;
+    }
       
     pos_cactus--; //decrementa a posição do cactus
     pos_pite--;   //decrementa a posição do pite
   
     pit++;        //modifica a imagem do pite
 
-    lcd.clear();
-    print_tela();
+    lcd.clear(); //limpa tela
+    print_tela(); //imprime tela
 
-    t_a_cenario = tempo;
+    t_a_cenario = tempo; //atualiza o tempo anterior do cenário
 
     }
 
-  if (tempo%1000<1){
-      if (tempo_cenario>80){
-        Serial.println(tempo_cenario);
+  if (tempo%1000<1){ //a cada um segundo a velocidade do cenário aumenta
+      if(tempo_cenario>80){ //enquanto o tempo de repetição for maior que 80 
+        Serial.println(tempo_cenario); 
         Serial.println(tempo);
-
-        tempo_cenario-=10;
+        tempo_cenario-=5; //diminuimos 5 do tempo de repetição (aumentamos assim a velocidade)
       }
   }
-  delay(1);
+  delay(1); //arduino respirar (e não dar erros)
 }
