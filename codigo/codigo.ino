@@ -1,38 +1,27 @@
-#include <LiquidCrystal.h>
+#include <LiquidCrystal.h> //biblioteca LCD
 
-#define cactus 4
+#define cactus 4 
 
-unsigned long tempo; //tempo 
-unsigned long t_a_dino = 0;
-unsigned long t_a_cenario = 0;
+unsigned long tempo; //tempo geral
+unsigned long t_a_dino = 0; //tempo anterior do dino
+unsigned long t_a_cenario = 0; //tempo anterior do cenário
 
 unsigned long tempo_dino = 250; //tempo de repetição do dino
 unsigned long tempo_cenario = 500;//tempo de repetição do cenario
 
 
-int pos_cactus = 15;
+int pos_cactus = 15; //posição do cacto (começa no quinze porque ele surge no fim do cenário)
 
-int pos_dino = 0;
-int dino = 0; 
+int pos_dino = 0; //posição do dino (começa no zero porque ele fica no início do cenário)
+int dino = 0; //variável que armazena qual desenho do dino estamos usando (usado para dar movimento ao personagem)
 
-int pos_pite = 8;
-int pit = 5;
+int pos_pite = 8; //posição do pite (bicho que voa)
+int pit = 5; //variável que armazena qual desenho do pite estamos usando (usado para dar movimento ao personagem)
 
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2; //explica as ligações do lc no arduino
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-byte Dino_andando_1[8] = {
-  0b00111,
-  0b00111,
-  0b00111,
-  0b10110,
-  0b10111,
-  0b01110,
-  0b01110,
-  0b01010
-};
-
-byte Dino_andando_0[8] = {
+byte Dino_andando_0[8] = { //desenho do dinossauro com a patinha direita no chão
   0b00111,
   0b00111,
   0b00111,
@@ -43,7 +32,18 @@ byte Dino_andando_0[8] = {
   0b00010
 };
 
-byte Dino_andando_2[8] = {
+byte Dino_andando_1[8] = { //desenho do dinossauro com duas patinhas no chão
+  0b00111,
+  0b00111,
+  0b00111,
+  0b10110,
+  0b10111,
+  0b01110,
+  0b01110,
+  0b01010
+};
+
+byte Dino_andando_2[8] = { //desenho do dinossauro com patinha esquerda no chão 
   0b00111,
   0b00111,
   0b00111,
@@ -54,7 +54,7 @@ byte Dino_andando_2[8] = {
   0b01000
 };
 
-byte cacto[8] = {
+byte cacto[8] = { //desenho do cactus
   0b00101,
   0b10101,
   0b10101,
@@ -65,7 +65,7 @@ byte cacto[8] = {
   0b00100
 };
 
-byte pite_0[8]{
+byte pite_0[8]{ //desenho do pite com asas abertas
   0b00000,
   0b00100,
   0b01100,
@@ -76,7 +76,7 @@ byte pite_0[8]{
   0b00000
 };
 
-byte pite_1[8]{
+byte pite_1[8]{ //desenho do pite com asas fechas
   0b00000,
   0b00100,
   0b01100,
@@ -89,10 +89,11 @@ byte pite_1[8]{
 
 
 void setup() {
-  // initialize LCD and set up the number of columns and rows:
+  // inicializa o LCD com o numero de linhas e de colunas
   lcd.begin(16, 2);
 
-  lcd.createChar(0, Dino_andando_0);
+  //associação do desenho a determinado número
+  lcd.createChar(0, Dino_andando_0);  
   lcd.createChar(1, Dino_andando_1);
   lcd.createChar(2, Dino_andando_2);
   lcd.createChar(3, Dino_andando_1);
@@ -100,6 +101,7 @@ void setup() {
   lcd.createChar(5, pite_0);
   lcd.createChar(6, pite_1);
 
+  //inicializa a serial
   Serial.begin(9600);
   print_tela();
 
