@@ -1,22 +1,11 @@
 #include <LiquidCrystal.h> //biblioteca LCD
 
-#define cactus 4 
-
 unsigned long tempo; //tempo geral
 unsigned long t_a_dino = 0; //tempo anterior do dino
 unsigned long t_a_cenario = 0; //tempo anterior do cenário
 
 unsigned long tempo_dino = 250; //tempo de repetição do dino
 unsigned long tempo_cenario = 500;//tempo de repetição do cenario
-
-
-int pos_cactus = 15; //posição do cacto (começa no quinze porque ele surge no fim do cenário)
-
-int pos_dino = 0; //posição do dino (começa no zero porque ele fica no início do cenário)
-int dino = 0; //variável que armazena qual desenho do dino estamos usando (usado para dar movimento ao personagem)
-
-int pos_pite = 8; //posição do pite (bicho que voa)
-int pit = 5; //variável que armazena qual desenho do pite estamos usando (usado para dar movimento ao personagem)
 
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2; //explica as ligações do lc no arduino
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -54,7 +43,7 @@ byte Dino_andando_2[8] = { //desenho do dinossauro com patinha esquerda no chão
   0b01000
 };
 
-byte cacto[8] = { //desenho do cactus
+byte cactus[8] = { //desenho do cactus
   0b00101,
   0b10101,
   0b10101,
@@ -87,6 +76,16 @@ byte pite_1[8]{ //desenho do pite com asas fechas
   0b00000
 };
 
+typedef struct personagem{ 
+  int pos_x; //guarda a posição em x
+  int pos_y; //guarda a posição em y
+  int desenho; //guarda qual imagem é (usado para movimentação)
+};
+
+//criação dos personagens
+personagem dino;
+personagem cacto;
+personagem pite;
 
 void setup() {
   // inicializa o LCD com o numero de linhas e de colunas
@@ -97,36 +96,45 @@ void setup() {
   lcd.createChar(1, Dino_andando_1);
   lcd.createChar(2, Dino_andando_2);
   lcd.createChar(3, Dino_andando_1);
-  lcd.createChar(4, cacto);
+  lcd.createChar(4, cactus);
   lcd.createChar(5, pite_0);
   lcd.createChar(6, pite_1);
 
   //inicializa a serial
   Serial.begin(9600);
-  
+
+  //declaração das posições e imagens iniciais 
+  dino.pos_x = 0;
+  dino.pos_y = 1;
+  dino.desenho = 0;
+
+  pite.pos_x = 8;
+  pite.pos_y = 0;
+  pite.desenho = 5;
+
+  cacto.pos_x = 15;
+  cacto.pos_y = 1;
+  cacto.desenho = 4;
+
   //chama a função
   print_tela();
-
 }
 
 //função que imprime os desenhos na tela
-
 void print_tela(){
 
     //desenha dino
-    lcd.setCursor(0,1);
-    lcd.write(byte(dino));
+    lcd.setCursor(dino.pos_x,dino.pos_y);
+    lcd.write(byte(dino.desenho));
     
-    //desenha cactus
-    lcd.setCursor(pos_cactus, 1);
-    lcd.write(byte(cactus));
+    //desenha cacto
+    lcd.setCursor(cacto.pos_x, cacto.pos_y);
+    lcd.write(byte(cacto.desenho));
 
     //desenha pite  
-    lcd.setCursor(pos_pite, 0);
-    lcd.write(byte(pit));
-  
-  
-  }
+    lcd.setCursor(pite.pos_x, pite.pos_y);
+    lcd.write(byte(pite.desenho));  
+}
 
 void loop() {
 
@@ -135,10 +143,10 @@ void loop() {
   if((tempo-t_a_dino)>=tempo_dino){ //se o (tempo atual - o tempo anterior do dino) for maior ou igual ao tempo estipulado de repetição do dino
     t_a_dino = tempo; // o tempo anterior é atualizado
 
-    if(dino > 2){    //reseta a imagem do dino
-      dino = 0;
+    if(dino.desenho>2){    //reseta a imagem do dino
+      dino.desenho = 0;
     }else{
-      dino++;       //modifica a imagem do dino
+      dino.desenho++;       //modifica a imagem do dino
     }
     
     lcd.clear(); //limpa tela
@@ -149,22 +157,22 @@ void loop() {
 
   if((tempo-t_a_cenario)>tempo_cenario){ //se o (tempo atual - o tempo anterior do cenário) for maior ou igual ao tempo estipulado de repetição do cenário
     
-    if(pos_cactus<1){ //reseta a posição do cactus
-      pos_cactus = 16; //colocamos 16 porque em seguida decretaremos a posição (se colocássemos 15 ele nunca chegaria no 15
+    if(cacto.pos_x<1){ //reseta a posição do cactus
+      cacto.pos_x = 16; //colocamos 16 porque em seguida decretaremos a posição (se colocássemos 15 ele nunca chegaria no 15
     }
   
-    if(pos_pite<1){  //reseta a posição do pite
-      pos_pite = 16; //colocamos 16 porque em seguida decretaremos a posição (se colocássemos 15 ele nunca chegaria no 15
+    if(pite.pos_x<1){  //reseta a posição do pite
+      pite.pos_x = 16; //colocamos 16 porque em seguida decretaremos a posição (se colocássemos 15 ele nunca chegaria no 15
     }
   
-    if(pit == 6){     //reseta a imagem do pite
-      pit = 4;
+    if(pite.desenho == 6){     //reseta a imagem do pite
+      pite.desenho = 4;
     }
       
-    pos_cactus--; //decrementa a posição do cactus
-    pos_pite--;   //decrementa a posição do pite
+    cacto.pos_x--; //decrementa a posição do cactus
+    pite.pos_x--;   //decrementa a posição do pite
   
-    pit++;        //modifica a imagem do pite
+    pite.desenho++;        //modifica a imagem do pite
 
     lcd.clear(); //limpa tela
     print_tela(); //imprime tela
