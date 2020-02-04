@@ -1,6 +1,10 @@
 #include <LiquidCrystal.h> //biblioteca LCD
 #include <string.h>
 
+#define botao_vermelho 6 //botão de pular
+#define botao_verde 10 //botão de descer
+#define botao_reset 9 //botão de reset
+
 unsigned long tempo; //tempo geral
 unsigned long t_a_add = 0; //tempo anterior da adição de um novo obstáculo
 unsigned long t_a_dino = 0; //tempo anterior do dino
@@ -9,6 +13,29 @@ unsigned long t_a_cenario = 0; //tempo anterior do cenário
 unsigned long tempo_dino = 250; //tempo de repetição do dino
 unsigned long tempo_cenario = 500;//tempo de repetição do cenario
 unsigned long tempo_add = 0; //tempo atual de criação do novo obstáculo
+unsigned long tempo_pulo = 0; //tempo que o dinossauro fica no ar
+
+int flag_dino = 0; //flag que auxilia na função pulo e permite que dois dinos não sejam printados ao mesmo tempo
+                   //flag = 0 -> dino no chão         flag = 1 -> dino no ar
+int reset = 0; //quando vira 1 reseta
+int botao_dino_voador = 0; //flag para resolver o bug do botão
+
+int tam_vet = 0; //guarda a quantidade de elementos no cenário(pite e cacto)
+
+typedef struct personagem{ 
+  int pos_x; //guarda a posição em x
+  int pos_y; //guarda a posição em y
+  int desenho; //guarda qual imagem é (usado para movimentação)
+  int tipo = -1; // tipo = 0 -> cacto
+                 // tipo = 1 -> pite
+                 // tipo = -1 -> nulo
+};
+
+//criação do personagem dino
+personagem dino;
+
+//cria um vetor que guardará os elementos do cenário (pite e cacto)
+personagem cenario[15];
 
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2; //explica as ligações do lc no arduino
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -79,22 +106,16 @@ byte pite_1[8]{ //desenho do pite com asas fechas
   0b00000
 };
 
-int tam_vet = 0; //guarda a quantidade de elementos no cenário(pite e cacto)
-
-typedef struct personagem{ 
-  int pos_x; //guarda a posição em x
-  int pos_y; //guarda a posição em y
-  int desenho; //guarda qual imagem é (usado para movimentação)
-  int tipo = -1; // tipo = 0 -> cacto
-                 // tipo = 1 -> pite
-                 // tipo = -1 -> nulo
+byte core[8] = {
+  0b00000,
+  0b01010,
+  0b11111,
+  0b11111,
+  0b11111,
+  0b01110,
+  0b00100,
+  0b00000
 };
-
-//criação do personagem dino
-personagem dino;
-
-//cria um vetor que guardará os elementos do cenário (pite e cacto)
-personagem cenario[15];
 
 void setup() {
   // inicializa o LCD com o numero de linhas e de colunas
@@ -108,11 +129,15 @@ void setup() {
   lcd.createChar(4, cactus);
   lcd.createChar(5, pite_0);
   lcd.createChar(6, pite_1);
+  lcd.createChar(7, core);
 
   //inicializa a serial
   Serial.begin(9600);
 
   randomSeed(analogRead(0)); //possibilita o real random
+
+  pinMode(botao_vermelho, INPUT);
+  pinMode(botao_verde, INPUT);
 
   //declaração das posições e imagens iniciais do dino
   dino.pos_x = 0;
@@ -157,9 +182,9 @@ void atualizar(){ //atualiza a posição e o desenho dos obstáculos
   i = 0;
   
   while(i<tam_vet){ //atualiza a posição e o desenho dos obstáculos
-    Serial.println(i);
+    //Serial.println(i);
     if(cenario[i].tipo == 1){ // se o tipo for pite
-      if(cenario[i].desenho == 6){     //reseta a imagem do pite
+      if(cenario[i].desenho >= 6){     //reseta a imagem do pite
         cenario[i].desenho = 4; 
       }
       cenario[i].desenho++;
@@ -188,9 +213,74 @@ void novo_obstaculo(){
   tam_vet++; //incrementa um na variável referente a quantidade de elementos no cenário
 }
 
-void loop() {
+void pulo(){ //função para o dino pular
+  lcd.setCursor(0,1); //seta o cursor para posição atual do dino (em baixo)
+  lcd.print(" "); //apaga o dino da posição anterior (em baixo)
+  lcd.setCursor(0,0); //seta o cursor para a nova posição do dino (em cima)
+  lcd.write(byte(1)); //printa o dino em cima
+  dino.pos_y = 0; //altera a posição do dino
+}
+
+void descida(){ //função para o dino descer
+  lcd.setCursor(0,0); //seta o cursor para a posição atual do dino(
+  lcd.print(" "); //apaga o dino da posição anterior (em cima)
+  lcd.setCursor(0,1); //seta o cursor para a nova posição do dino (em baixo)
+  lcd.write(byte(dino.desenho)); //printa o dino em baixo
+  dino.pos_y = 1; //altera a posição do dino
+}
+
+void colisao(){ 
+  if(cenario[0].pos_x == dino.pos_x && cenario[0].pos_y == dino.pos_y){ //se a posição do dino coincidir com a posição inicial do vetor cenario 
+    reset = 0; //mudamos a flag do reset
+    Serial.print(dino.pos_x);
+    Serial.print(" ");
+    Serial.println(dino.pos_y);
+    Serial.print(cenario[0].pos_x);
+    Serial.print(" ");
+    Serial.print(cenario[0].pos_y);
+    Serial.print(" ");
+    Serial.println(cenario[0].desenho);
+    lcd.clear(); //limpamos a telaa
+    lcd.setCursor(1,0);
+    lcd.print("PERDEU, OTARIO!"); //printamos a mensagem de "perdeu"
+    lcd.setCursor(7,1);
+    lcd.write(byte(7));
+    lcd.write(byte(7));
+    lcd.write(byte(7));
+    while(reset != 1){ //enquanto a flag do botão não virar 1 fica num lopping infinito com a mensagem de perda
+      if(digitalRead(botao_reset)==HIGH){ //se o botão for apertado
+        reset = 1; //flag do botão é 1;
+        for(int i = 0; i< tam_vet; i++){ //anulamos todos as posições do vetor (tipo = -1)
+          cenario[i].tipo = -1;
+        }
+        tam_vet = 0; //zeramos o tamanho do vetor 
+      }
+    }
+  }
+}
+
+void loop(){
 
   tempo = millis(); //tempo atual de execução
+
+  if(digitalRead(botao_vermelho) == HIGH && botao_dino_voador == 0){ //se o botão vermelho por pressionado
+    pulo(); //chama a função pulo
+    botao_dino_voador = 1;
+    flag_dino = 1; //flag que diz que o dino ta em cima
+    tempo_pulo = tempo; //tempo do pulo é alterado
+  }
+
+  if(flag_dino==1 && tempo-tempo_pulo>=1000){ //se o dino ta em cima e passa-se 1 segundo
+    descida(); //chama a função de descida
+    botao_dino_voador = 0; 
+    flag_dino = 0; //flag que diz que o dino ta em baixo
+  }
+  
+  if(digitalRead(botao_verde)== HIGH){ //se o botão verde for pressionado
+    descida(); //chama a função descida
+    botao_dino_voador = 0; 
+    flag_dino = 0; //flag que diz que o dino ta em baixo
+  }
 
   if((tempo-t_a_add)>=tempo_add){ //random para criar um novo obstáculo
     novo_obstaculo();
@@ -207,7 +297,11 @@ void loop() {
       dino.desenho++;       //modifica a imagem do dino
     }
 
-    print_dino(); //imprime dino
+    if(flag_dino == 0){ //se o dino ta em baixo 
+      print_dino(); //imprime dino
+    }else{ //se o dino ta em cima
+      pulo(); // chama pulo
+    }
     print_tela(); //imprime cenario
   }
 
@@ -218,18 +312,25 @@ void loop() {
 
     lcd.clear(); //limpa tela
     print_tela(); //imprime tela
-    print_dino(); //imprime cenario
+    
+    if(flag_dino == 0){ //se o dino ta embaixo
+      print_dino(); //imprime dino
+    }else{ //se o dino ta em cima chama pulo
+      pulo();
+    }
 
     t_a_cenario = tempo; //atualiza o tempo anterior do cenário
+    colisao();
 
     }
 
   if (tempo%1000<1){ //a cada um segundo a velocidade do cenário aumenta
       if(tempo_cenario>80){ //enquanto o tempo de repetição for maior que 80 
-        Serial.println(tempo_cenario); 
-        Serial.println(tempo);
+        //Serial.println(tempo_cenario); 
+        //Serial.println(tempo);
         tempo_cenario-=5; //diminuimos 5 do tempo de repetição (aumentamos assim a velocidade)
       }
   }
+
   delay(1); //arduino respirar (e não dar erros)
 }
