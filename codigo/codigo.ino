@@ -15,7 +15,7 @@ unsigned long tempo_cenario = 500;//tempo de repetição do cenario
 unsigned long tempo_add = 0; //tempo atual de criação do novo obstáculo
 unsigned long tempo_pulo = 0; //tempo que o dinossauro fica no ar
 
-int flag_dino = 0; //flag que auxilia na função pulo e permite que dois dinos não sejam printados ao mesmo tempo
+//int flag_dino = 0; //flag que auxilia na função pulo e permite que dois dinos não sejam printados ao mesmo tempo
                    //flag = 0 -> dino no chão         flag = 1 -> dino no ar
 int reset = 0; //quando vira 1 reseta
 int botao_dino_voador = 0; //flag para resolver o bug do botão
@@ -144,8 +144,6 @@ void setup() {
   dino.pos_y = 1;
   dino.desenho = 0;
 
-  //Printa o cenário
-  print_tela();
 }
 
 //função que imprime os desenhos na tela
@@ -182,7 +180,6 @@ void atualizar(){ //atualiza a posição e o desenho dos obstáculos
   i = 0;
   
   while(i<tam_vet){ //atualiza a posição e o desenho dos obstáculos
-    //Serial.println(i);
     if(cenario[i].tipo == 1){ // se o tipo for pite
       if(cenario[i].desenho >= 6){     //reseta a imagem do pite
         cenario[i].desenho = 4; 
@@ -192,6 +189,7 @@ void atualizar(){ //atualiza a posição e o desenho dos obstáculos
     cenario[i].pos_x--; //todos os obstáculos andam um para esquerda na LCD
     i++;
   }
+    delay(1);
 }
 
 //Essa função tem o objetivo de criar um elemento para o cenário
@@ -210,36 +208,25 @@ void novo_obstaculo(){
     cenario[tam_vet].desenho = 5;
     cenario[tam_vet].pos_y = random(2);
   }
-  tam_vet++; //incrementa um na variável referente a quantidade de elementos no cenário
+  tam_vet++; //incrementa um na variável referente a quantidade de elementos no cenário 
 }
 
 void pulo(){ //função para o dino pular
   lcd.setCursor(0,1); //seta o cursor para posição atual do dino (em baixo)
   lcd.print(" "); //apaga o dino da posição anterior (em baixo)
-  lcd.setCursor(0,0); //seta o cursor para a nova posição do dino (em cima)
-  lcd.write(byte(1)); //printa o dino em cima
   dino.pos_y = 0; //altera a posição do dino
 }
 
 void descida(){ //função para o dino descer
   lcd.setCursor(0,0); //seta o cursor para a posição atual do dino(
   lcd.print(" "); //apaga o dino da posição anterior (em cima)
-  lcd.setCursor(0,1); //seta o cursor para a nova posição do dino (em baixo)
-  lcd.write(byte(dino.desenho)); //printa o dino em baixo
   dino.pos_y = 1; //altera a posição do dino
 }
 
 void colisao(){ 
-  if(cenario[0].pos_x == dino.pos_x && cenario[0].pos_y == dino.pos_y){ //se a posição do dino coincidir com a posição inicial do vetor cenario 
+  if(cenario[0].pos_x == dino.pos_x && cenario[0].pos_y == dino.pos_y &&cenario[0].desenho != 0){ //se a posição do dino coincidir com a posição inicial do vetor cenario 
+    //cenario[0].desenho != 0 - para evitar o bug que acontece quando o desenho não muda a tempo e é igualado a zero
     reset = 0; //mudamos a flag do reset
-    Serial.print(dino.pos_x);
-    Serial.print(" ");
-    Serial.println(dino.pos_y);
-    Serial.print(cenario[0].pos_x);
-    Serial.print(" ");
-    Serial.print(cenario[0].pos_y);
-    Serial.print(" ");
-    Serial.println(cenario[0].desenho);
     lcd.clear(); //limpamos a telaa
     lcd.setCursor(1,0);
     lcd.print("PERDEU, OTARIO!"); //printamos a mensagem de "perdeu"
@@ -253,7 +240,8 @@ void colisao(){
         for(int i = 0; i< tam_vet; i++){ //anulamos todos as posições do vetor (tipo = -1)
           cenario[i].tipo = -1;
         }
-        tam_vet = 0; //zeramos o tamanho do vetor 
+        tam_vet = 0; //zeramos o tamanho do vetor
+        tempo_cenario = 500; //para o jogo recomeçar na mesma velocidade
       }
     }
   }
@@ -263,29 +251,31 @@ void loop(){
 
   tempo = millis(); //tempo atual de execução
 
+  //a flag dino_voador é uma flag que permite que o botão de subir fique pressionado e mesma assim o dino caia
   if(digitalRead(botao_vermelho) == HIGH && botao_dino_voador == 0){ //se o botão vermelho por pressionado
     pulo(); //chama a função pulo
-    botao_dino_voador = 1;
-    flag_dino = 1; //flag que diz que o dino ta em cima
+    botao_dino_voador = 100; //colamos ela em 100 para que dê um tempo bom para o dino cair antes dele subir novamente se o botão ficar pressionado
     tempo_pulo = tempo; //tempo do pulo é alterado
   }
 
-  if(flag_dino==1 && tempo-tempo_pulo>=1000){ //se o dino ta em cima e passa-se 1 segundo
+  if((dino.pos_y==0 || botao_dino_voador != 0) && tempo-tempo_pulo>=1000){ //se o dino ta em cima ou se a flag dino voador não dor zero (que é quando ele pode pular novamente) e passa-se 1 segundo
     descida(); //chama a função de descida
-    botao_dino_voador = 0; 
-    flag_dino = 0; //flag que diz que o dino ta em baixo
+    botao_dino_voador--; //decrescemos a flag
   }
   
   if(digitalRead(botao_verde)== HIGH){ //se o botão verde for pressionado
     descida(); //chama a função descida
     botao_dino_voador = 0; 
-    flag_dino = 0; //flag que diz que o dino ta em baixo
   }
 
-  if((tempo-t_a_add)>=tempo_add){ //random para criar um novo obstáculo
+  if((tempo-t_a_add)>=tempo_add && tam_vet < 15){ //random para criar um novo obstáculo
     novo_obstaculo();
     t_a_add = tempo;
-    tempo_add = random(2000, 3500); //tempo entre 2 e 3.5 segundos
+    if(tempo_cenario>100){
+      tempo_add = random(2000, 3500); //tempo entre 2 e 3.5 segundos
+    }else{
+      tempo_add = random(1000, 2000);
+    }
   }
   
   if((tempo-t_a_dino)>=tempo_dino){ //se o (tempo atual - o tempo anterior do dino) for maior ou igual ao tempo estipulado de repetição do dino
@@ -296,13 +286,10 @@ void loop(){
     }else{
       dino.desenho++;       //modifica a imagem do dino
     }
-
-    if(flag_dino == 0){ //se o dino ta em baixo 
-      print_dino(); //imprime dino
-    }else{ //se o dino ta em cima
-      pulo(); // chama pulo
-    }
+    
     print_tela(); //imprime cenario
+    print_dino(); //imprime dino
+   
   }
 
 
@@ -311,26 +298,19 @@ void loop(){
     atualizar(); //atualiza o elementos do cenario (pites e cactos)
 
     lcd.clear(); //limpa tela
-    print_tela(); //imprime tela
-    
-    if(flag_dino == 0){ //se o dino ta embaixo
-      print_dino(); //imprime dino
-    }else{ //se o dino ta em cima chama pulo
-      pulo();
-    }
 
+    print_tela(); //imprime cenario
+    print_dino(); //imprime dino
+  
     t_a_cenario = tempo; //atualiza o tempo anterior do cenário
-    colisao();
 
-    }
+    colisao();
+  }
 
   if (tempo%1000<1){ //a cada um segundo a velocidade do cenário aumenta
       if(tempo_cenario>80){ //enquanto o tempo de repetição for maior que 80 
-        //Serial.println(tempo_cenario); 
-        //Serial.println(tempo);
         tempo_cenario-=5; //diminuimos 5 do tempo de repetição (aumentamos assim a velocidade)
       }
   }
-
   delay(1); //arduino respirar (e não dar erros)
 }
