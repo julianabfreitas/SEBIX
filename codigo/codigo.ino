@@ -1,5 +1,6 @@
 #include <LiquidCrystal.h> //biblioteca LCD
 #include <string.h>
+#include <EEPROM.h>
 
 #define botao_vermelho 6 //botão de pular
 #define botao_verde 10 //botão de descer
@@ -9,14 +10,17 @@ unsigned long tempo; //tempo geral
 unsigned long t_a_add = 0; //tempo anterior da adição de um novo obstáculo
 unsigned long t_a_dino = 0; //tempo anterior do dino
 unsigned long t_a_cenario = 0; //tempo anterior do cenário
+long int score = 0; //Score do jogo iniciado
+int pos_score;  //Variável utilizada para ajustar a posição do score no LCD
+int x_cursor;   //Posição x do score
+int best_score = EEPROM.read(0);  //EEPROM é a memória do arduino, que guarda o melhor score ja feito antes
+int buzzer = 8; //Pino do buzzer
 
 unsigned long tempo_dino = 250; //tempo de repetição do dino
 unsigned long tempo_cenario = 500;//tempo de repetição do cenario
 unsigned long tempo_add = 0; //tempo atual de criação do novo obstáculo
 unsigned long tempo_pulo = 0; //tempo que o dinossauro fica no ar
 
-//int flag_dino = 0; //flag que auxilia na função pulo e permite que dois dinos não sejam printados ao mesmo tempo
-                   //flag = 0 -> dino no chão         flag = 1 -> dino no ar
 int reset = 0; //quando vira 1 reseta
 int botao_dino_voador = 0; //flag para resolver o bug do botão
 
@@ -138,12 +142,27 @@ void setup() {
 
   pinMode(botao_vermelho, INPUT);
   pinMode(botao_verde, INPUT);
+  pinMode(botao_reset, INPUT);
+  pinMode(buzzer,OUTPUT);   
 
   //declaração das posições e imagens iniciais do dino
   dino.pos_x = 0;
   dino.pos_y = 1;
   dino.desenho = 0;
 
+  //Menu inicial do jogo, para que ele não comece automaticamente
+  while(digitalRead(botao_reset) == LOW){
+    tempo = millis();
+    lcd.setCursor(1, 0);
+    lcd.print("Best Score: ");
+    lcd.print(best_score);
+    lcd.setCursor(3,1);
+    lcd.print("PRESS START");
+    lcd.setCursor(0,1);
+    lcd.write(byte(1));
+    lcd.setCursor(15,1);
+    lcd.write(byte(4));
+ }
 }
 
 //função que imprime os desenhos na tela
@@ -162,7 +181,6 @@ void print_dino(){
 }
 
 void atualizar(){ //atualiza a posição e o desenho dos obstáculos
-  
   int i;
   
   if(tam_vet == 0){ //se o vetor for nulo
@@ -226,14 +244,25 @@ void descida(){ //função para o dino descer
 void colisao(){ 
   if(cenario[0].pos_x == dino.pos_x && cenario[0].pos_y == dino.pos_y &&cenario[0].desenho != 0){ //se a posição do dino coincidir com a posição inicial do vetor cenario 
     //cenario[0].desenho != 0 - para evitar o bug que acontece quando o desenho não muda a tempo e é igualado a zero
+
+    //Som feito quando há uma colisão
+    tone(buzzer, 110); //A - lá          
+    delay(200);
+    noTone(buzzer);
+
+    //If utilizado para calcular qual o best score, atualizando-o
+    if(score > best_score){
+      best_score = score;
+      EEPROM.write(0, best_score);
+    }
     reset = 0; //mudamos a flag do reset
     lcd.clear(); //limpamos a telaa
     lcd.setCursor(1,0);
     lcd.print("PERDEU, OTARIO!"); //printamos a mensagem de "perdeu"
-    lcd.setCursor(7,1);
-    lcd.write(byte(7));
-    lcd.write(byte(7));
-    lcd.write(byte(7));
+    lcd.setCursor(4,1);
+    lcd.print("BS: ");  //Printa o best score
+    lcd.print(best_score); 
+    
     while(reset != 1){ //enquanto a flag do botão não virar 1 fica num lopping infinito com a mensagem de perda
       if(digitalRead(botao_reset)==HIGH){ //se o botão for apertado
         reset = 1; //flag do botão é 1;
@@ -242,17 +271,39 @@ void colisao(){
         }
         tam_vet = 0; //zeramos o tamanho do vetor
         tempo_cenario = 500; //para o jogo recomeçar na mesma velocidade
+        score = 0;
       }
     }
   }
 }
 
+//Função que printa o score na tela
+void print_score(){
+  pos_score = score;
+  x_cursor = 15;
+  while(pos_score > 9){ //Loop utilizado para ajustar o score sempre no canto direito, para que ele nao suma da tela
+    x_cursor--;
+    pos_score = pos_score/10;
+  }
+  lcd.setCursor(x_cursor,0);
+  lcd.print(score);
+}
+
 void loop(){
 
   tempo = millis(); //tempo atual de execução
+  //Score é aumentado a cada 0,5 segundo
+  if(tempo%500 <= 0){
+      score++;
+      print_score();
+    }
 
   //a flag dino_voador é uma flag que permite que o botão de subir fique pressionado e mesma assim o dino caia
   if(digitalRead(botao_vermelho) == HIGH && botao_dino_voador == 0){ //se o botão vermelho por pressionado
+    //Som do pulo do dinossauro
+    tone(buzzer, 2637); //E7 - mi            
+    delay(200);
+    noTone(buzzer);
     pulo(); //chama a função pulo
     botao_dino_voador = 100; //colamos ela em 100 para que dê um tempo bom para o dino cair antes dele subir novamente se o botão ficar pressionado
     tempo_pulo = tempo; //tempo do pulo é alterado
@@ -289,6 +340,7 @@ void loop(){
     
     print_tela(); //imprime cenario
     print_dino(); //imprime dino
+    print_score();
    
   }
 
@@ -301,6 +353,7 @@ void loop(){
 
     print_tela(); //imprime cenario
     print_dino(); //imprime dino
+    print_score();
   
     t_a_cenario = tempo; //atualiza o tempo anterior do cenário
 
