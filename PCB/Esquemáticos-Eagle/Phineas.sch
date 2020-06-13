@@ -8276,13 +8276,17 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <junction x="10.16" y="180.34"/>
 </segment>
 </net>
-<net name="N$15" class="0">
+<net name="N$16" class="0">
 <segment>
 <pinref part="SG1" gate="G$1" pin="2"/>
-<pinref part="R5" gate="G$1" pin="A"/>
 <pinref part="R5" gate="G$1" pin="E"/>
-<wire x1="167.64" y1="208.28" x2="167.64" y2="172.72" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="172.72" x2="58.42" y2="172.72" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$18" class="0">
+<segment>
+<pinref part="R5" gate="G$1" pin="S"/>
+<wire x1="172.72" y1="215.9" x2="172.72" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="172.72" x2="58.42" y2="172.72" width="0.1524" layer="91"/>
 <pinref part="ARDUINO_NANO1" gate="G$1" pin="D3"/>
 <wire x1="58.42" y1="172.72" x2="58.42" y2="165.1" width="0.1524" layer="91"/>
 </segment>
