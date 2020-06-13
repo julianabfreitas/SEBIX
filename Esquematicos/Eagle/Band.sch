@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.6.1">
+<eagle version="9.1.0">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
@@ -7921,7 +7921,6 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <part name="GND6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="GND9" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND10" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
@@ -8001,11 +8000,8 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <instance part="GND8" gate="1" x="116.84" y="147.32" smashed="yes">
 <attribute name="VALUE" x="114.3" y="144.78" size="1.778" layer="96"/>
 </instance>
-<instance part="GND9" gate="1" x="160.02" y="48.26" smashed="yes">
-<attribute name="VALUE" x="157.48" y="45.72" size="1.778" layer="96"/>
-</instance>
-<instance part="GND10" gate="1" x="160.02" y="48.26" smashed="yes">
-<attribute name="VALUE" x="157.48" y="45.72" size="1.778" layer="96"/>
+<instance part="GND10" gate="1" x="160.02" y="50.8" smashed="yes">
+<attribute name="VALUE" x="157.48" y="48.26" size="1.778" layer="96"/>
 </instance>
 <instance part="P+1" gate="VCC" x="55.88" y="101.6" smashed="yes" rot="R90">
 <attribute name="VALUE" x="58.42" y="99.06" size="1.778" layer="96" rot="R180"/>
@@ -8073,10 +8069,8 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 </segment>
 <segment>
 <pinref part="BUZZER" gate="G$1" pin="2"/>
-<wire x1="160.02" y1="58.42" x2="160.02" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="GND9" gate="1" pin="GND"/>
+<wire x1="160.02" y1="58.42" x2="160.02" y2="53.34" width="0.1524" layer="91"/>
 <pinref part="GND10" gate="1" pin="GND"/>
-<junction x="160.02" y="50.8"/>
 </segment>
 <segment>
 <pinref part="LCD" gate="G$1" pin="R/W"/>
