@@ -1263,7 +1263,9 @@ Updated 01/08/2005&lt;/i&gt;&lt;/h4&gt;</description>
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0" drill="0">
+<class number="0" name="default" width="0.508" drill="0">
+</class>
+<class number="1" name="Alimentacao" width="1.016" drill="0">
 </class>
 </classes>
 <parts>
@@ -1366,17 +1368,20 @@ Updated 01/08/2005&lt;/i&gt;&lt;/h4&gt;</description>
 <busses>
 </busses>
 <nets>
-<net name="VCC" class="0">
+<net name="VCC" class="1">
 <segment>
 <pinref part="P+3" gate="VCC" pin="VCC"/>
 <pinref part="X1" gate="G$1" pin="VDD"/>
-<wire x1="33.02" y1="160.02" x2="33.02" y2="182.88" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="160.02" x2="33.02" y2="177.8" width="0.1524" layer="91"/>
 <pinref part="X1" gate="G$1" pin="A"/>
+<wire x1="33.02" y1="177.8" x2="33.02" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="182.88" x2="33.02" y2="185.42" width="0.1524" layer="91"/>
-<wire x1="66.04" y1="160.02" x2="66.04" y2="180.34" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="160.02" x2="66.04" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="182.88" x2="66.04" y2="182.88" width="0.1524" layer="91"/>
-<wire x1="66.04" y1="182.88" x2="66.04" y2="180.34" width="0.1524" layer="91"/>
 <junction x="33.02" y="182.88"/>
+<pinref part="REG_BRIGHT" gate="G$1" pin="2"/>
+<wire x1="35.56" y1="177.8" x2="33.02" y2="177.8" width="0.1524" layer="91"/>
+<junction x="33.02" y="177.8"/>
 </segment>
 <segment>
 <pinref part="ARDUINO_NANO1" gate="G$1" pin="5V"/>
@@ -1400,7 +1405,7 @@ Updated 01/08/2005&lt;/i&gt;&lt;/h4&gt;</description>
 <junction x="121.92" y="139.7"/>
 </segment>
 </net>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <pinref part="X1" gate="G$1" pin="VSS"/>
 <wire x1="30.48" y1="160.02" x2="30.48" y2="162.56" width="0.1524" layer="91"/>
@@ -1555,13 +1560,6 @@ Updated 01/08/2005&lt;/i&gt;&lt;/h4&gt;</description>
 <pinref part="ARDUINO_NANO1" gate="G$1" pin="D4"/>
 <wire x1="55.88" y1="160.02" x2="55.88" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="55.88" y1="177.8" x2="116.84" y2="177.8" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$14" class="0">
-<segment>
-<junction x="35.56" y="182.88"/>
-<pinref part="REG_BRIGHT" gate="G$1" pin="2"/>
-<wire x1="35.56" y1="177.8" x2="35.56" y2="182.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$15" class="0">
