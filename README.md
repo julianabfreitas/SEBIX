@@ -20,7 +20,7 @@ Para o projeto, utilizamos somente os componentes listados abaixo:
 - 1 Leitor LCD 16x2
   - Eagle: componente baixado da internet, juntamente com seu modelo 3D
 - 3 Botões
-  - Eagle: 40-XX (Version 2)
+  - Eagle: B3F-40XX (Version 2)
 - 1 Potenciômetro
   -  Eagle: 3RP/1610N (Version 2)
 - 1 Buzzer
