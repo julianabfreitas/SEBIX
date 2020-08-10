@@ -5537,13 +5537,15 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0" drill="0">
+<class number="0" name="default" width="0.508" drill="0">
+</class>
+<class number="1" name="alimentacao" width="1.016" drill="0">
 </class>
 </classes>
 <parts>
 <part name="FRAME1" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A4P-LOC" device=""/>
-<part name="ARDUINO_NANO1" library="ArduinoNanoV30" deviceset="ARDUINO_NANO" device=""/>
-<part name="DIS1" library="display-lcd" library_urn="urn:adsk.eagle:library:214" deviceset="TUXGR_16X2_R2" device="" package3d_urn="urn:adsk.eagle:package:13139/1"/>
+<part name="ARDUINO_NANO1" library="ArduinoNanoV30" deviceset="ARDUINO_NANO" device="" override_package3d_urn="urn:adsk.eagle:package:22547936/2" override_package_urn="urn:adsk.eagle:footprint:22547943/1"/>
+<part name="DIS1" library="display-lcd" library_urn="urn:adsk.eagle:library:214" deviceset="TUXGR_16X2_R2" device="" package3d_urn="urn:adsk.eagle:package:13139/1" override_package3d_urn="urn:adsk.eagle:package:22547731/2" override_package_urn="urn:adsk.eagle:footprint:13120/1"/>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -5556,15 +5558,17 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="BUZZER" library="buzzer" library_urn="urn:adsk.eagle:library:113" deviceset="F/QMB" device="" package3d_urn="urn:adsk.eagle:package:5270/1"/>
-<part name="R5" library="pot" library_urn="urn:adsk.eagle:library:331" deviceset="3RP/1610N" device="" package3d_urn="urn:adsk.eagle:package:22726/1"/>
-<part name="R1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2"/>
-<part name="R2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2"/>
-<part name="R3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2"/>
-<part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2"/>
-<part name="PULAR" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="40-XX" device="" package3d_urn="urn:adsk.eagle:package:27483/1"/>
-<part name="DESCER" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="40-XX" device="" package3d_urn="urn:adsk.eagle:package:27483/1"/>
-<part name="RESET" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="40-XX" device="" package3d_urn="urn:adsk.eagle:package:27483/1"/>
+<part name="BUZZER" library="buzzer" library_urn="urn:adsk.eagle:library:113" deviceset="F/QMB" device="" package3d_urn="urn:adsk.eagle:package:5270/1" override_package3d_urn="urn:adsk.eagle:package:22548628/3" override_package_urn="urn:adsk.eagle:footprint:5226/1"/>
+<part name="R5" library="pot" library_urn="urn:adsk.eagle:library:331" deviceset="3RP/1610N" device="" package3d_urn="urn:adsk.eagle:package:22726/1" override_package3d_urn="urn:adsk.eagle:package:22548630/2" override_package_urn="urn:adsk.eagle:footprint:22673/1"/>
+<part name="R1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" override_package3d_urn="urn:adsk.eagle:package:22547733/2" override_package_urn="urn:adsk.eagle:footprint:22992/1"/>
+<part name="R2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" override_package3d_urn="urn:adsk.eagle:package:22548606/2" override_package_urn="urn:adsk.eagle:footprint:22992/1"/>
+<part name="R3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" override_package3d_urn="urn:adsk.eagle:package:22548620/2" override_package_urn="urn:adsk.eagle:footprint:22992/1"/>
+<part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" override_package3d_urn="urn:adsk.eagle:package:22548624/2" override_package_urn="urn:adsk.eagle:footprint:22992/1"/>
+<part name="PULAR" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="40-XX" device="" package3d_urn="urn:adsk.eagle:package:27483/1" override_package3d_urn="urn:adsk.eagle:package:22548614/3" override_package_urn="urn:adsk.eagle:footprint:27470/1">
+<attribute name="SPICEPREFIX" value="E"/>
+</part>
+<part name="DESCER" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="40-XX" device="" package3d_urn="urn:adsk.eagle:package:27483/1" override_package3d_urn="urn:adsk.eagle:package:22548618/2" override_package_urn="urn:adsk.eagle:footprint:27470/1"/>
+<part name="RESET" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="40-XX" device="" package3d_urn="urn:adsk.eagle:package:27483/1" override_package3d_urn="urn:adsk.eagle:package:22548622/2" override_package_urn="urn:adsk.eagle:footprint:27470/1"/>
 </parts>
 <sheets>
 <sheet>
@@ -5755,7 +5759,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <pinref part="R5" gate="G$1" pin="S"/>
 </segment>
 </net>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <pinref part="ARDUINO_NANO1" gate="G$1" pin="GND@1"/>
 <pinref part="GND8" gate="1" pin="GND"/>
@@ -5782,7 +5786,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <pinref part="R4" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="VCC" class="0">
+<net name="VCC" class="1">
 <segment>
 <wire x1="121.92" y1="220.98" x2="121.92" y2="215.9" width="0.1524" layer="91"/>
 <pinref part="P+1" gate="VCC" pin="VCC"/>
@@ -5863,6 +5867,11 @@ will not be understood (or retained) with this version.
 Since Version 8.3, EAGLE supports the association of 3D packages
 with devices in libraries, schematics, and board files. Those 3D
 packages will not be understood (or retained) with this version.
+</note>
+<note version="9.4" severity="warning">
+Since Version 9.4, EAGLE supports the overriding of 3D packages
+in schematics and board files. Those overridden 3d packages
+will not be understood (or retained) with this version.
 </note>
 <note version="8.4" severity="warning">
 Since Version 8.4, EAGLE supports properties for SPICE simulation. 
