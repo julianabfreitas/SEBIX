@@ -44,6 +44,7 @@ Cada um dos integrantes do grupo desenvolveu uma PCB no software Eagle com o obj
 
 ## Caixa
 A caixa foi desenvolvida no software Fusion360, abaixo estão os modelos desenvolvidos.
+
 ![Caixa Band](https://github.com/julianabfreitas/SEBIX/blob/master/Imagens/caixa_band.jpeg)
 ![Caixa Erika](https://github.com/julianabfreitas/SEBIX/blob/master/Imagens/caixa_erika.jpeg)
 ![Caixa Phineas](https://github.com/julianabfreitas/SEBIX/blob/master/Imagens/caixa_phineas.jpeg)
